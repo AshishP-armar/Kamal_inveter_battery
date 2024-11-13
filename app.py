@@ -12,7 +12,8 @@ app.secret_key = 'Atp@4466'  # Required for flashing messages
 # Create a database connection and table if not exists
 def init_db():
 
-    conn = sqlite3.connect('batteries.db')
+    # conn = sqlite3.connect('batteries.db')
+    conn = sqlite3.connect('batteries1.db')
     c = conn.cursor()
     c.execute('''
         CREATE TABLE IF NOT EXISTS battery_sales (
@@ -21,7 +22,7 @@ def init_db():
             mobile_number TEXT NOT NULL,
             sale_date TEXT NOT NULL,
             battery_id TEXT NOT NULL UNIQUE,
-            battery_name TEXT NOT NULL UNIQUE,
+            battery_name TEXT NOT NULL ,
             ampires INTEGER NOT NULL,
             price REAL NOT NULL,
             warranty TEXT NOT NULL
@@ -33,14 +34,16 @@ def init_db():
 # Initialize the database
 init_db()
 # Route to handle form submission
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         customer_name = request.form['customer_name']
         mobile_number = request.form['mobile_number']
         sale_date = request.form['sale_date']
+        # print(sale_date)
         battery_id = request.form['battery_id']
         battery_name = request.form['battery_name']
+        # print(battery_name)
         ampires = request.form['ampires']
         price = request.form['price']
         warranty = request.form['warranty']
@@ -54,7 +57,7 @@ def index():
 
         if existing_battery:
             # Flash message for duplicate battery ID
-            flash(f"Battery with ID '{battery_id}' already exists!", 'error')
+            flash(f"सीरियल नंबर वाली बैटरी पहले से मौजूद है : {battery_id}", 'error')
         else:
             # Insert the new battery sale data
             c.execute('''
@@ -64,7 +67,7 @@ def index():
             conn.commit()
 
             # Flash success message
-            flash("Data added successfully!", 'success')
+            flash("बैटरी डेटा सफलतापूर्वक जोड़ा गया!", 'success')
 
         conn.close()
 
@@ -91,5 +94,13 @@ def search():
             flash("Not Found")
             return render_template('search.html', result=result)
     return render_template('search.html', result=result)
+
+
+@app.route("/")
+def main():
+    return render_template("main.html") 
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
