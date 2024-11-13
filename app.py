@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import sqlite3
-
+import os
 
 app = Flask(__name__)
 app.secret_key = 'Atp@4466'  # Required for flashing messages
@@ -100,7 +100,8 @@ def search():
 def main():
     return render_template("main.html") 
 
+port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0', port=5000)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
+    # app.run(debug=True)
