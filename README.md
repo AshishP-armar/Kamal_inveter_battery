@@ -71,7 +71,7 @@ CREATE DATABASE battery_sales_db;
 ```
 2. Create the `battery_sales` table:
 ```bash
-CREATE DATABASE battery_sales_db;
+USE battery_sales_db;
 CREATE TABLE battery_sales ( id INT AUTO_INCREMENT PRIMARY KEY, customer_name VARCHAR(255) NOT NULL, mobile_number VARCHAR(15) NOT NULL, sale_date DATE NOT NULL, battery_id VARCHAR(255) NOT NULL UNIQUE, battery_name VARCHAR(255) NOT NULL, ampires INT NOT NULL, price DECIMAL(10, 2) NOT NULL, warranty VARCHAR(50) NOT NULL );
 ```
 3. Configure Environment Variables:-
