@@ -55,13 +55,13 @@ Follow these steps to deploy and set up the project:
 ### 1. Clone the Repository
 ```bash
 https://github.com/AshishP-armar/Kamal_inveter_battery.git
-cd battery-sales-management
+cd Kamal_inveter_battery
    ```
 
 
 ### 2. Install Dependencies
 ```bash
-`pip install -r requirements.txt`
+pip install -r requirements.txt
 ```
 
 ### 3. Set Up the Database
