@@ -44,7 +44,7 @@ macOS/Linux:
 ```bash
 . .venv/bin/activate
 ```
-### 3. **Deactivate the Virtual Environment**
+### 4. **Deactivate the Virtual Environment**
 ```bash
 deactivate
 ```
