@@ -1,41 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-import sqlite3
 import os
+import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = 'Atp@4466'  # Required for flashing messages
 
+def get_db_connection():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", "Atp@4466"),
+        database=os.getenv("DB_NAME", "battery_sells_db"),
+        port=3306
+    )
 
-
-
-
-# Create a database connection and table if not exists
-def init_db():
-
-    # conn = sqlite3.connect('batteries.db')
-    conn = sqlite3.connect('batteries1.db')
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS battery_sales (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            customer_name TEXT NOT NULL,
-            mobile_number TEXT NOT NULL,
-            sale_date TEXT NOT NULL,
-            battery_id TEXT NOT NULL UNIQUE,
-            battery_name TEXT NOT NULL ,
-            ampires INTEGER NOT NULL,
-            price REAL NOT NULL,
-            warranty TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-# Initialize the database
-init_db()
 # Route to handle form submission
 @app.route('/add', methods=['GET', 'POST'])
 def index():
+    print("inside the index ")
+    print(request.method)
     if request.method == 'POST':
         customer_name = request.form['customer_name']
         mobile_number = request.form['mobile_number']
@@ -48,21 +31,21 @@ def index():
         price = request.form['price']
         warranty = request.form['warranty']
 
-        conn = sqlite3.connect('batteries.db')
+        conn = get_db_connection()
         c = conn.cursor()
 
         # Check if battery ID already exists
-        c.execute('SELECT * FROM battery_sales WHERE battery_id = ?', (battery_id,))
+        c.execute('SELECT * FROM battery_sales WHERE battery_id = %s', (battery_id,))
         existing_battery = c.fetchone()
 
         if existing_battery:
             # Flash message for duplicate battery ID
             flash(f"सीरियल नंबर वाली बैटरी पहले से मौजूद है : {battery_id}", 'error')
         else:
-            # Insert the new battery sale data
+                # Insert the new battery sale data
             c.execute('''
                 INSERT INTO battery_sales (customer_name, mobile_number, sale_date, battery_name, battery_id, ampires, price, warranty)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ''', (customer_name, mobile_number, sale_date, battery_name, battery_id, ampires, price, warranty))
             conn.commit()
 
@@ -82,9 +65,9 @@ def search():
     session.clear()
     if request.method == 'POST':
         battery_id = request.form['battery_id']
-        conn = sqlite3.connect('batteries.db')
+        conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT * FROM battery_sales WHERE battery_id = ?', (battery_id,))
+        c.execute('SELECT * FROM battery_sales WHERE battery_id = %s', (battery_id,))
         result = c.fetchone()
         conn.close()
         if result:
@@ -103,5 +86,5 @@ def main():
 port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=port)
-    # app.run(debug=True)
+    # app.run(host='0.0.0.0', port=port)
+    app.run(debug=True)
